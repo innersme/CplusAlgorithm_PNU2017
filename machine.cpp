@@ -18,11 +18,9 @@ public:
 };
 
 bool srt(const machine& v1, const machine& v2){
-    return (v1.pi > v2.pi);
-}
-
-bool srt2(const machine& v1, const machine& v2){
-    return (v1.di > v2.di);
+    if (v1.pi != v2.pi)
+        return v1.pi > v2.pi;
+    return v1.di > v2.di;
 }
 
 int main()
@@ -30,44 +28,38 @@ int main()
     int N, K, t;
     
     int i = 0;
-    //ifstream fin("/Users/innersme/C_study/CplusAlgorithms/CplusAlgorithms/1.inp");
-    ifstream fin("machine.inp");
+    ifstream fin("/Users/innersme/C_study/CplusAlgorithm_PNU2017/sampleData6/2.inp");
+    //ifstream fin("machine.inp");
     
     fin >> N >> t >> K;
     
     // 나머지 값 입력
-    vector <machine> c(N);
     vector <machine> b(N);
     vector <machine> a(N);
     
     for (int i = 0; i< N; i++) {
-        fin >>c[i].pi >> c[i].di;
+        fin >>a[i].pi >> a[i].di;
     }
     fin.close();
     
-    sort(c.begin(), c.end(), srt2);
+    sort(a.begin(), a.end(),srt);
     
-    for (int i = 0; i < N; i++) {
-        a[i] = c[i];
-    }
     
-    sort(a.begin(), a.end(), srt);
-    
-    /*
-    ofstream fout("/Users/innersme/C_study/CplusAlgorithms/CplusAlgorithms/sampleData6/out.out");
+    ofstream fout("/Users/innersme/C_study/CplusAlgorithm_PNU2017/sampleData6/out.out");
     
     
     fout << N << " " << t << " " <<K << endl;
     for (int i = 0; i< N; i++) {
         fout << a[i].pi <<" " << a[i].di << endl;
     }
-    fout.close();*/
+    fout.close();
     
     // 배열 생성
     int ** arr = new int* [K];
     for (int i = 0; i < K; i++) {
         arr[i] = new int [t];
     }
+    int *Ar = new int [N];
     
     // 배열 초기화
     for (int i = 0; i< t; i++) {
@@ -79,7 +71,8 @@ int main()
     
     i =0;
     int j = 0; int count = 0 ;
-    while (count < t*K) {
+    
+    while (count < t*K || i < N) {
         
         int row = 0;
         int col = a[i].di-1;
@@ -87,7 +80,8 @@ int main()
         while(1)
         {
             if (col < 0) {
-                b[j] = a[i]; j++;
+                cout << i << endl ;
+                b[j] = a[i]; j++; Ar[j] = i;
                 break;
             }
             else if (row == K)
@@ -99,7 +93,7 @@ int main()
             {
                 if (arr[row][col] == 0)
                 {
-                    // cout << row << " " << col << " "<< a[i].pi<<" " << count << endl;
+                    cout << row << " " << col << " "<< a[i].pi<<" " << count << endl;
                     arr[row][col] = a[i].pi; count++;
                     break;
                 }
@@ -121,8 +115,16 @@ int main()
         i++; j++;
     }
     
-    cout << b[0].pi << " " << b[0].di << endl;
+    cout << endl << endl;
+    for (int i = 0 ; i < K ; i ++) {
+        for (int j = 0 ; j < t; j ++) {
+            cout << arr[i][j] << " " ;
+        }
+        cout << endl;
+    }
     
+    cout << b[0].pi << " " << b[0].di << endl;
+    cout << Ar[0] <<  endl;
     int di = b[0].di;
     
     int sum = 0;
@@ -155,11 +157,12 @@ int main()
         sum2 = sum2 - b[0].pi;
     }
     
-    //ofstream fout("/Users/innersme/C_study/CplusAlgorithms/CplusAlgorithms/machine.out");
-    ofstream fout("machine.out");
-    fout << sum << " " << sum2<< endl;
+    //ofstream fout("/Users/innersme/C_study/CplusAlgorithm_PNU2017/sampleData6/machine.out");
+    //ofstream fout("machine.out");
+    //fout << sum << " " << sum2<< endl;
     
     delete []sumArr;
+    delete []Ar;
     for (int i = 0; i < K; i++)
         delete []arr[i];
     delete [] arr;
